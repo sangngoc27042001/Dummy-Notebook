@@ -58,8 +58,29 @@ import boto3
 
 s3 = boto3.client(
     's3',
-    aws_access_key_id="AKIAU3ZXEQUNPEYZD47X",
-    aws_secret_access_key= "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"
+    aws_access_key_id="<aws_access_key_id>",
+    aws_secret_access_key= "<aws_secret_access_key>"
     )
 
 s3.upload_file("./my_model.tar.gz", "sang-sagemaker-practice", "my_model.tar.gz")
+
+# Call an incoke to Endpoint
+import boto3, json, sagemaker
+import os 
+
+os.environ['AWS_DEFAULT_REGION'] = "us-east-1"
+
+sagemaker_session = sagemaker.Session(boto3.session.Session(
+    aws_access_key_id="<aws_access_key_id>",
+    aws_secret_access_key= "<aws_secret_access_key>"
+))
+
+predictor = sagemaker.base_predictor.Predictor(
+    endpoint_name = 'huggingface-pytorch-inference-2024-01-13-02-53-41-283', 
+    sagemaker_session = sagemaker_session,
+    serializer = sagemaker.base_serializers.JSONSerializer(),
+    deserializer = sagemaker.base_deserializers.JSONDeserializer()
+)
+
+response=predictor.predict(data)
+response
